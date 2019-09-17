@@ -13,10 +13,13 @@ apt-get -y install puppet-agent
 echo "$(/opt/puppetlabs/bin/facter networking.ip) $(hostname).node.consul $(hostname)" >> /etc/hosts
 echo "manager_ip_address manager.node.consul manager" >> /etc/hosts
 
-# configure Puppet to run every five minutes and accept all new agents automatically
+# configure Puppet to run every five minutes
 /opt/puppetlabs/bin/puppet config set server manager.node.consul --section main
 /opt/puppetlabs/bin/puppet config set runinterval 300 --section main
+
+# configure puppetserver to accept all new agents automatically
 /opt/puppetlabs/bin/puppet config set autosign true --section master
+/opt/puppetlabs/bin/puppetserver ca setup
 
 # install and configure r10k
 /opt/puppetlabs/bin/puppet module install puppet-r10k
@@ -40,6 +43,14 @@ r10k deploy environment -p
 # if additional first time scripts needed, e.g. do
 #cd /etc/puppetlabs/code/environments/production/
 #bash ./new_keys_and_passwds.bash
+#
+# only needed for now is some module "hacks"
+/opt/puppetlabs/puppet/bin/gem install lookup_http
+/opt/puppetlabs/puppet/bin/puppetserver gem install lookup_http
+cd /etc/puppetlabs/code/environments/production/modules
+apt-get -y install git
+git clone https://github.com/ppouliot/puppet-dns.git
+mv puppet-dns dns
 
 # start puppetserver and let puppet configure the rest of manager
 /opt/puppetlabs/bin/puppet resource service puppetserver ensure=running enable=true
