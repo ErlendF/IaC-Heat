@@ -41,8 +41,8 @@ EOF
 r10k deploy environment -p
 
 # if additional first time scripts needed, e.g. do
-#cd /etc/puppetlabs/code/environments/production/
-#bash ./new_keys_and_passwds.bash
+cd /etc/puppetlabs/code/environments/production/ || exit
+bash ./new_keys_and_passwds.bash
 #
 # only needed for now is some module "hacks"
 /opt/puppetlabs/puppet/bin/gem install lookup_http
