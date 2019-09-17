@@ -1,0 +1,109 @@
+heat_template_version: 2013-05-23
+
+description: >
+  HOT template to create a new neutron network plus a router to the public
+  network, and for deploying three servers into the new network. The template also
+  assigns floating IP addresses to each server so they are routable from the
+  public network. This creates the basic node.consul infrastructure with a 
+  manager (Ubuntu), a monitor (Ubuntu) and a DNS server (Windows Server)
+
+parameters:
+  key_name:
+    type: string
+    description: Name of keypair to assign to servers
+  image_linux:
+    type: string
+    description: Name of image to use for servers
+    default: Ubuntu Server 18.04 LTS (Bionic Beaver) amd64
+  flavor_manager:
+    type: string
+    description: Flavor to use for servers
+    default: m1.medium
+  public_net:
+    type: string
+    description: >
+      ID or name of public network for which floating IP addresses will be allocated
+  admin_net_name:
+    type: string
+    description: Name of admin network to be created
+    default: iac_admin_net
+  admin_net_cidr:
+    type: string
+    description: Admin network address (CIDR notation)
+    default: 192.168.180.0/24
+  admin_net_gateway:
+    type: string
+    description: Admin network gateway address
+    default: 192.168.180.1
+  admin_net_pool_start:
+    type: string
+    description: Start of admin network IP address allocation pool
+    default: 192.168.180.100
+  admin_net_pool_end:
+    type: string
+    description: End of admin network IP address allocation pool
+    default: 192.168.180.199
+  sec_group_linux:
+    type: comma_delimited_list
+    description: Security groups
+
+resources:
+  admin_net:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_param: admin_net_name }
+
+  admin_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: admin_net }
+      cidr: { get_param: admin_net_cidr }
+      gateway_ip: { get_param: admin_net_gateway }
+      allocation_pools:
+        - start: { get_param: admin_net_pool_start }
+          end: { get_param: admin_net_pool_end }
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: { get_param: public_net }
+
+  router_interface_admin:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: router }
+      subnet_id: { get_resource: admin_subnet }
+
+  manager:
+    type: OS::Nova::Server
+    properties:
+      name: manager
+      image: { get_param: image_linux }
+      flavor: { get_param: flavor_manager }
+      key_name: { get_param: key_name }
+      networks:
+        - port: { get_resource: manager_port }
+      user_data: { get_file: lib/manager_boot.bash }
+
+  manager_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: admin_net }
+      security_groups: { get_param: sec_group_linux }
+      fixed_ips:
+        - subnet_id: { get_resource: admin_subnet }
+
+  manager_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param: public_net }
+      port_id: { get_resource: manager_port }
+
+outputs:
+  manager_ip:
+    value: { get_attr: [manager, networks, get_param: admin_net_name, 0]}
+  admin_net:
+    value: { get_resource: admin_net }
+  admin_subnet:
+    value: { get_resource: admin_subnet }
