@@ -11,7 +11,6 @@ apt-get -y install puppetserver git
 
 # configure local name resolution while waiting for DNS to work
 echo "$(/opt/puppetlabs/bin/facter networking.ip) $(hostname).node.consul $(hostname)" >> /etc/hosts
-echo "manager_ip_address manager.node.consul manager" >> /etc/hosts
 
 # configure Puppet to run every five minutes
 /opt/puppetlabs/bin/puppet config set server manager.node.consul --section main
