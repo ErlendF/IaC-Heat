@@ -5,7 +5,7 @@ tempdeb=$(mktemp /tmp/debpackage.XXXXXXXXXXXXXXXXXX) || exit 1
 wget -O "$tempdeb" https://apt.puppetlabs.com/puppet6-release-bionic.deb
 dpkg -i "$tempdeb"
 apt-get update
-apt-get -y install puppet-agent
+apt-get -y install puppetserver git
 /opt/puppetlabs/bin/puppet resource service puppet ensure=stopped enable=true
 /opt/puppetlabs/bin/puppet resource service puppetserver ensure=stopped enable=true
 
@@ -48,7 +48,6 @@ r10k deploy environment -p
 /opt/puppetlabs/puppet/bin/gem install lookup_http
 /opt/puppetlabs/puppet/bin/puppetserver gem install lookup_http
 cd /etc/puppetlabs/code/environments/production/modules
-apt-get -y install git
 git clone https://github.com/ppouliot/puppet-dns.git
 mv puppet-dns dns
 
