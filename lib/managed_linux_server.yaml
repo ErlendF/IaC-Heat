@@ -1,7 +1,7 @@
 heat_template_version: 2013-05-23
 
 description: >
-  HOT template for a GNU/Linux server with a nic in the admin network. 
+  HOT template for a GNU/Linux server with a nic in the admin network.
 
 parameters:
   key_name:
