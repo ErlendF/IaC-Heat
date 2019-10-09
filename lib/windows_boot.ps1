@@ -5,7 +5,7 @@ $ErrorActionPreference = "Stop"
 $wc = New-Object net.webclient
 $wc.Downloadfile($puppet_agent_msi_url, $puppet_agent_msi_path)
 cmd /c start /wait msiexec /qn /i $puppet_agent_msi_path /l*v puppet_agent_msi_log.txt PUPPET_MASTER_SERVER=manager.node.consul
-del $puppet_agent_msi_path
+Remove-Item $puppet_agent_msi_path
 Set-DnsClientGlobalSetting -SuffixSearchList @("node.consul")
 Get-NetAdapter | Set-DnsClient -ConnectionSpecificSuffix "node.consul"
 Add-Content "$env:windir\System32\drivers\etc\hosts" "$(& "C:\Program Files\Puppet Labs\Puppet\bin\facter.bat" networking.ip) $(hostname).node.consul $(hostname)"
