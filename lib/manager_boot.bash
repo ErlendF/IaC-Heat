@@ -31,7 +31,7 @@ class { 'r10k':
       'prefix'  => false,
     },
   },
-  postrun => "['/bin/bash', '/etc/puppetlabs/code/environments/production/new_keys_and_passwds.bash']",
+  postrun => ['/bin/bash', '/etc/puppetlabs/code/environments/production/new_keys_and_passwds.bash'],
 }
 EOF
 /opt/puppetlabs/bin/puppet apply /var/tmp/r10k.pp
@@ -41,8 +41,8 @@ EOF
 r10k deploy environment -p
 
 # if additional first time scripts needed, e.g. do
-cd /etc/puppetlabs/code/environments/production/ || exit
-bash ./new_keys_and_passwds.bash
+#cd /etc/puppetlabs/code/environments/production/ || exit  ##should be done in postrun by r10k
+#bash ./new_keys_and_passwds.bash
 #
 # only needed for now is some module "hacks"
 /opt/puppetlabs/puppet/bin/gem install lookup_http
