@@ -31,6 +31,7 @@ class { 'r10k':
       'prefix'  => false,
     },
   },
+  postrun => "['/bin/bash', '/etc/puppetlabs/code/environments/production/new_keys_and_passwds.bash']",
 }
 EOF
 /opt/puppetlabs/bin/puppet apply /var/tmp/r10k.pp
