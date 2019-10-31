@@ -46,7 +46,9 @@ r10k deploy environment -p
 #
 # only needed for now is some module "hacks"
 /opt/puppetlabs/puppet/bin/gem install lookup_http
+/opt/puppetlabs/puppet/bin/gem install toml-rb
 /opt/puppetlabs/bin/puppetserver gem install lookup_http
+/opt/puppetlabs/bin/puppetserver gem install toml-rb
 cd /etc/puppetlabs/code/environments/production/modules || exit
 git clone https://github.com/ppouliot/puppet-dns.git
 mv puppet-dns dns
