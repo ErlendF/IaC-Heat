@@ -1,6 +1,6 @@
 # IaC-Heat-A
 
-This is a Heat template to launch a flexible provisioned infrastructure. The servers are initialized based on [this Puppet control repo](https://bitbucket.org/ANTIOFF/iac-heat-a-gruppe-7/src/master/).
+This is a Heat template to launch a flexible provisioned infrastructure. The servers are initialized based on [this Puppet control repo](https://bitbucket.org/ANTIOFF/control-repo-a-gruppe-7/src/production/).
 
 Clone and launch in OpenStack with e.g.
 ```bash
