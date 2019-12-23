@@ -26,7 +26,7 @@ cat <<EOF > /var/tmp/r10k.pp
 class { 'r10k':
   sources => {
     'puppet' => {
-      'remote'  => 'https://bitbucket.org/ANTIOFF/control-repo-a-gruppe-7.git',
+      'remote'  => 'https://github.com/ErlendF/puppet-control-repo',
       'basedir' => '/etc/puppetlabs/code/environments',
       'prefix'  => false,
     },
